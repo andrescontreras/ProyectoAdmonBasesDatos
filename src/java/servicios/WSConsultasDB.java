@@ -10,12 +10,14 @@ import entities.AgregadosConsulta2;
 import entities.AgregadosConsulta3;
 import entities.AgregadosConsulta4;
 import entities.AgregadosConsulta5;
+import entities.Usuario;
 import facades.ConsultasDB;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 
 /**
  *
@@ -51,6 +53,11 @@ public class WSConsultasDB {
     @WebMethod(operationName = "cantidades_hemisferios")
     public List<AgregadosConsulta5> cantidades_hemisferios() {
         return ejbRef.cantidades_hemisferios();
+    }
+
+    @WebMethod(operationName = "login")
+    public List<Usuario> login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
+        return ejbRef.login(username, password);
     }
     
 }
