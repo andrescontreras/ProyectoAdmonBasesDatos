@@ -5,6 +5,13 @@
  */
 package facades;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.util.JSON;
 import entities.AgregadosConsulta1;
 import entities.AgregadosConsulta2;
 import entities.AgregadosConsulta3;
@@ -13,8 +20,11 @@ import entities.AgregadosConsulta5;
 import entities.Usuario;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -142,6 +152,27 @@ public class ConsultasDB {
         return hemisferios;
     }
 
+    public List<String> datosGrades() {
+        List<String> resultado = new ArrayList<>();
+        int i=0;
+        try {
+            MongoClientURI uri = new MongoClientURI(
+                    "mongodb://admonbd:admonbd@cluster0-shard-00-00-ld73c.mongodb.net:27017,cluster0-shard-00-01-ld73c.mongodb.net:27017,cluster0-shard-00-02-ld73c.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true");
+            MongoClient mongoClient;
+            mongoClient = new MongoClient(uri);
+            DB database = mongoClient.getDB("sample_training");
+            DBCollection collection = database.getCollection("grades");
+            DBCursor cursor = collection.find();
+            while (cursor.hasNext() && i<=200) {
+                resultado.add(cursor.next().toString());
+                i++;
+                //System.out.println(cursor.next());
+            }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ConsultasDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return resultado;
+    }
     public List<Usuario> login(String username, String password) {
         StoredProcedureQuery query = em.createStoredProcedureQuery("envio_tapi.login").registerStoredProcedureParameter(
                 1,
@@ -172,5 +203,26 @@ public class ConsultasDB {
             usuarios.add(usuario);
         }
         return usuarios;
+    }
+    public List<String> getDatosGradexStudentID(int id) {
+        List<String> resultado = new ArrayList<>();
+        try {   
+            MongoClientURI uri = new MongoClientURI(
+                    "mongodb://admonbd:admonbd@cluster0-shard-00-00-ld73c.mongodb.net:27017,cluster0-shard-00-01-ld73c.mongodb.net:27017,cluster0-shard-00-02-ld73c.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true");
+            MongoClient mongoClient;
+            mongoClient = new MongoClient(uri);
+            DB database = mongoClient.getDB("sample_training");
+            DBCollection collection = database.getCollection("grades");
+            BasicDBObject searchQuery = new BasicDBObject();
+            searchQuery.put("student_id", id);
+            DBCursor dbCursor = collection.find(searchQuery);
+            while (dbCursor.hasNext()) {
+                resultado.add(dbCursor.next().toString());
+                //System.out.println();
+            }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ConsultasDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return resultado;
     }
 }

@@ -55,9 +55,19 @@ public class WSConsultasDB {
         return ejbRef.cantidades_hemisferios();
     }
 
+    @WebMethod(operationName = "datosGrades")
+    public List<String> datosGrades() {
+        return ejbRef.datosGrades();
+    }
+
     @WebMethod(operationName = "login")
     public List<Usuario> login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
         return ejbRef.login(username, password);
+    }
+    
+    @WebMethod(operationName = "obtener_grades_idEstudiante")
+    public List<String> gradesxIDEstudiante(@WebParam(name = "idEstudiante") int id) {
+        return ejbRef.getDatosGradexStudentID(id);
     }
     
 }
