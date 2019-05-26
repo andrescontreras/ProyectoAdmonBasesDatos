@@ -153,6 +153,7 @@ public class ConsultasDB {
 
     public List<String> datosGrades() {
         List<String> resultado = new ArrayList<>();
+        int i=0;
         try {
             MongoClientURI uri = new MongoClientURI(
                     "mongodb://admonbd:admonbd@cluster0-shard-00-00-ld73c.mongodb.net:27017,cluster0-shard-00-01-ld73c.mongodb.net:27017,cluster0-shard-00-02-ld73c.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true");
@@ -161,8 +162,9 @@ public class ConsultasDB {
             DB database = mongoClient.getDB("sample_training");
             DBCollection collection = database.getCollection("grades");
             DBCursor cursor = collection.find();
-            while (cursor.hasNext()) {
+            while (cursor.hasNext() && i<=50) {
                 resultado.add(cursor.next().toString());
+                i++;
                 //System.out.println(cursor.next());
             }
         } catch (UnknownHostException ex) {
