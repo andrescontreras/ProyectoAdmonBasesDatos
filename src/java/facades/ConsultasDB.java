@@ -5,6 +5,12 @@
  */
 package facades;
 
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.util.JSON;
 import entities.AgregadosConsulta1;
 import entities.AgregadosConsulta2;
 import entities.AgregadosConsulta3;
@@ -12,8 +18,11 @@ import entities.AgregadosConsulta4;
 import entities.AgregadosConsulta5;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -45,7 +54,7 @@ public class ConsultasDB {
         query.execute();
         List<Object[]> multasObjs = query.getResultList();
         List<AgregadosConsulta1> hemisferios = new ArrayList<>();
-        
+
         for (Object[] m : multasObjs) {
             AgregadosConsulta1 hemisferio = new AgregadosConsulta1();
             hemisferio.setHemisferio(m[0].toString());
@@ -55,7 +64,7 @@ public class ConsultasDB {
         }
         return hemisferios;
     }
-    
+
     public List<AgregadosConsulta2> totalPorAnio() {
         StoredProcedureQuery query = em.createStoredProcedureQuery("envio_tapi.total_hemisferio_anio").registerStoredProcedureParameter(
                 1,
@@ -65,7 +74,7 @@ public class ConsultasDB {
         query.execute();
         List<Object[]> multasObjs = query.getResultList();
         List<AgregadosConsulta2> hemisferios = new ArrayList<>();
-        
+
         for (Object[] m : multasObjs) {
             AgregadosConsulta2 hemisferio = new AgregadosConsulta2();
             hemisferio.setHemisferio(m[0].toString());
@@ -75,7 +84,7 @@ public class ConsultasDB {
         }
         return hemisferios;
     }
-    
+
     public List<AgregadosConsulta3> porcentajeParticipacionPorContinente() {
         StoredProcedureQuery query = em.createStoredProcedureQuery("envio_tapi.participacion_continente").registerStoredProcedureParameter(
                 1,
@@ -85,7 +94,7 @@ public class ConsultasDB {
         query.execute();
         List<Object[]> multasObjs = query.getResultList();
         List<AgregadosConsulta3> hemisferios = new ArrayList<>();
-        
+
         for (Object[] m : multasObjs) {
             AgregadosConsulta3 hemisferio = new AgregadosConsulta3();
             hemisferio.setContinente(m[0].toString());
@@ -95,8 +104,8 @@ public class ConsultasDB {
         }
         return hemisferios;
     }
-    
-    public List<AgregadosConsulta4> ranking_continentes(){
+
+    public List<AgregadosConsulta4> ranking_continentes() {
         StoredProcedureQuery query = em.createStoredProcedureQuery("envio_tapi.ranking_continentes").registerStoredProcedureParameter(
                 1,
                 Class.class,
@@ -105,7 +114,7 @@ public class ConsultasDB {
         query.execute();
         List<Object[]> multasObjs = query.getResultList();
         List<AgregadosConsulta4> hemisferios = new ArrayList<>();
-        
+
         for (Object[] m : multasObjs) {
             AgregadosConsulta4 hemisferio = new AgregadosConsulta4();
             hemisferio.setHemisferio(m[0].toString());
@@ -116,8 +125,8 @@ public class ConsultasDB {
         }
         return hemisferios;
     }
-    
-    public List<AgregadosConsulta5> cantidades_hemisferios(){
+
+    public List<AgregadosConsulta5> cantidades_hemisferios() {
         StoredProcedureQuery query = em.createStoredProcedureQuery("envio_tapi.cantidades_hemisferios").registerStoredProcedureParameter(
                 1,
                 Class.class,
@@ -126,7 +135,7 @@ public class ConsultasDB {
         query.execute();
         List<Object[]> multasObjs = query.getResultList();
         List<AgregadosConsulta5> hemisferios = new ArrayList<>();
-        
+
         for (Object[] m : multasObjs) {
             AgregadosConsulta5 hemisferio = new AgregadosConsulta5();
             hemisferio.setHemisferio(m[0].toString());
@@ -140,5 +149,24 @@ public class ConsultasDB {
         }
         return hemisferios;
     }
-}
 
+    public List<String> datosGrades() {
+        List<String> resultado = new ArrayList<>();
+        try {
+            MongoClientURI uri = new MongoClientURI(
+                    "mongodb://admonbd:admonbd@cluster0-shard-00-00-ld73c.mongodb.net:27017,cluster0-shard-00-01-ld73c.mongodb.net:27017,cluster0-shard-00-02-ld73c.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true");
+            MongoClient mongoClient;
+            mongoClient = new MongoClient(uri);
+            DB database = mongoClient.getDB("sample_training");
+            DBCollection collection = database.getCollection("grades");
+            DBCursor cursor = collection.find();
+            while (cursor.hasNext()) {
+                resultado.add(cursor.next().toString());
+                //System.out.println(cursor.next());
+            }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(ConsultasDB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return resultado;
+    }
+}
