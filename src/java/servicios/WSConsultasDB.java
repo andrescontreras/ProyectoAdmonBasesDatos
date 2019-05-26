@@ -10,12 +10,14 @@ import entities.AgregadosConsulta2;
 import entities.AgregadosConsulta3;
 import entities.AgregadosConsulta4;
 import entities.AgregadosConsulta5;
+import entities.Usuario;
 import facades.ConsultasDB;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.jws.WebService;
 import javax.ejb.Stateless;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 
 /**
  *
@@ -56,6 +58,11 @@ public class WSConsultasDB {
     @WebMethod(operationName = "obtener_grades_mongo")
     public List<String> datosGradesMongo(){
         return ejbRef.datosGrades();
+    }
+
+    @WebMethod(operationName = "login")
+    public List<Usuario> login(@WebParam(name = "username") String username, @WebParam(name = "password") String password) {
+        return ejbRef.login(username, password);
     }
     
 }

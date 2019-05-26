@@ -16,6 +16,7 @@ import entities.AgregadosConsulta2;
 import entities.AgregadosConsulta3;
 import entities.AgregadosConsulta4;
 import entities.AgregadosConsulta5;
+import entities.Usuario;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
@@ -168,5 +169,36 @@ public class ConsultasDB {
             Logger.getLogger(ConsultasDB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return resultado;
+    }
+    public List<Usuario> login(String username, String password) {
+        StoredProcedureQuery query = em.createStoredProcedureQuery("envio_tapi.login").registerStoredProcedureParameter(
+                1,
+                String.class,
+                ParameterMode.IN
+        )
+                .registerStoredProcedureParameter(
+                        2,
+                        String.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        3,
+                        Class.class,
+                        ParameterMode.REF_CURSOR
+                )
+                .setParameter(1, username)
+                .setParameter(2, password);
+
+        query.execute();
+        List<Object[]> multasObjs = query.getResultList();
+        List<Usuario> usuarios = new ArrayList<>();
+
+        for (Object[] m : multasObjs) {
+            Usuario usuario = new Usuario();
+            usuario.setLogin(m[0].toString());
+            usuario.setPwd(m[1].toString());
+            usuarios.add(usuario);
+        }
+        return usuarios;
     }
 }
