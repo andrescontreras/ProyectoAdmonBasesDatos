@@ -163,7 +163,7 @@ public class ConsultasDB {
             DB database = mongoClient.getDB("sample_training");
             DBCollection collection = database.getCollection("grades");
             DBCursor cursor = collection.find();
-            while (cursor.hasNext() && i<=50) {
+            while (cursor.hasNext() && i<=200) {
                 resultado.add(cursor.next().toString());
                 i++;
                 //System.out.println(cursor.next());
