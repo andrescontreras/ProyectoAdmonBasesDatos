@@ -53,10 +53,10 @@ public class WSConsultasDB {
     @WebMethod(operationName = "cantidades_hemisferios")
     public List<AgregadosConsulta5> cantidades_hemisferios() {
         return ejbRef.cantidades_hemisferios();
-    
     }
-    @WebMethod(operationName = "obtener_grades_mongo")
-    public List<String> datosGradesMongo(){
+
+    @WebMethod(operationName = "datosGrades")
+    public List<String> datosGrades() {
         return ejbRef.datosGrades();
     }
 
