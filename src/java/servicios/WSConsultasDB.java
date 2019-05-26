@@ -65,4 +65,9 @@ public class WSConsultasDB {
         return ejbRef.login(username, password);
     }
     
+    @WebMethod(operationName = "obtener_grades_idEstudiante")
+    public List<String> gradesxIDEstudiante(@WebParam(name = "idEstudiante") int id) {
+        return ejbRef.getDatosGradexStudentID(id);
+    }
+    
 }
